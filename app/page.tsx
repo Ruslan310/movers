@@ -1,0 +1,117 @@
+"use client";
+
+import { useMemo, useState } from "react";
+
+const Arrow = () => <span aria-hidden="true">↗</span>;
+const Check = () => <span className="check" aria-hidden="true">✓</span>;
+
+const services = [
+  { num: "01", title: "Apartment moves", text: "Elevators, strata rules, tight hallways — planned before moving day.", tag: "Most popular" },
+  { num: "02", title: "House moves", text: "Full-home packing, furniture protection and careful room-by-room setup.", tag: "Door to door" },
+  { num: "03", title: "Cafés & restaurants", text: "Equipment, fixtures and furniture moved around your service schedule.", tag: "Low downtime" },
+  { num: "04", title: "Packing & logistics", text: "Supplies, packing, storage coordination and last-mile delivery.", tag: "Full service" },
+];
+
+const reviews = [
+  ["AK", "Anna K.", "Kitsilano → Burnaby", "The team arrived right on time, protected every corner and somehow made our two-bedroom move feel easy. Final price matched the quote."],
+  ["DL", "David L.", "North Vancouver", "Our restaurant equipment was heavy and delicate. Everything was labelled, secured and back in place before our next service."],
+  ["MS", "Maya S.", "Yaletown → Coquitlam", "Fast, kind and incredibly organized. The live arrival update and clear hourly pricing took all the stress out of moving day."],
+];
+
+export default function Home() {
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [home, setHome] = useState("2 Bedroom");
+  const [hours, setHours] = useState(5);
+  const [distance, setDistance] = useState(18);
+  const [packing, setPacking] = useState(false);
+  const [sent, setSent] = useState(false);
+
+  const estimate = useMemo(() => {
+    const crew = home === "Studio" ? 129 : home === "1 Bedroom" ? 149 : home === "2 Bedroom" ? 179 : home === "3+ Bedroom" ? 219 : 239;
+    return Math.round(crew * hours + Math.max(0, distance - 10) * 2.25 + (packing ? 185 : 0));
+  }, [home, hours, distance, packing]);
+
+  return (
+    <main>
+      <div className="ambient ambientOne" /><div className="ambient ambientTwo" />
+      <header className="nav glass">
+        <a href="#top" className="brand" aria-label="Northline Movers home"><span className="brandMark">N</span><span>NORTHLINE <b>MOVERS</b></span></a>
+        <nav className={menuOpen ? "navLinks open" : "navLinks"} aria-label="Primary navigation">
+          <a href="#services" onClick={() => setMenuOpen(false)}>Services</a>
+          <a href="#work" onClick={() => setMenuOpen(false)}>Our work</a>
+          <a href="#reviews" onClick={() => setMenuOpen(false)}>Reviews</a>
+          <a href="#areas" onClick={() => setMenuOpen(false)}>Areas</a>
+          <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
+        </nav>
+        <a className="navCta" href="#estimate">Get estimate <Arrow /></a>
+        <button className="menuButton" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
+      </header>
+
+      <section className="hero" id="top">
+        <div className="heroCopy">
+          <div className="eyebrow"><i /> Moving Greater Vancouver, daily</div>
+          <h1>Your move.<br /><em>Handled beautifully.</em></h1>
+          <p>Careful local movers for apartments, homes, cafés and restaurants. Clear quotes. Protected belongings. No moving-day drama.</p>
+          <div className="heroActions"><a className="button primary" href="#estimate">Build your estimate <Arrow /></a><a className="button textButton" href="tel:+16045550184">(604) 555–0184</a></div>
+          <div className="trustRow"><div className="faces"><span>AK</span><span>JM</span><span>DL</span></div><div><b>4.9 <span className="stars">★★★★★</span></b><small>from 240+ local moves</small></div></div>
+        </div>
+        <div className="heroVisual">
+          <div className="heroPhoto" role="img" aria-label="Professional movers loading boxes into a truck" />
+          <div className="floatingCard arrival glass"><span className="pulse" /><div><small>YOUR CREW</small><b>Arrives on time</b></div><strong>08:30</strong></div>
+          <div className="floatingCard coverage glass"><b>Fully insured</b><span>✓</span><small>Your space & belongings</small></div>
+          <div className="routeLine"><span>VAN</span><i /><span>YVR</span></div>
+        </div>
+      </section>
+
+      <section className="proofStrip" aria-label="Company highlights"><div><strong>1,200+</strong><span>moves completed</span></div><div><strong>7 days</strong><span>a week availability</span></div><div><strong>$2M</strong><span>liability coverage</span></div><div><strong>0</strong><span>hidden fees</span></div></section>
+
+      <section className="section" id="services">
+        <div className="sectionHead"><div><span className="kicker">WHAT WE MOVE</span><h2>Big move or small.<br />We know the way.</h2></div><p>From a studio across the street to an entire restaurant across the Lower Mainland, your move gets a proper plan.</p></div>
+        <div className="servicesGrid">{services.map((service) => <article className="serviceCard glass" key={service.num}><div className="serviceTop"><span>{service.num}</span><span className="tag">{service.tag}</span></div><div className={`serviceIcon icon${service.num}`}><span /></div><h3>{service.title}</h3><p>{service.text}</p><a href="#contact">Plan this move <Arrow /></a></article>)}</div>
+      </section>
+
+      <section className="darkSection" id="estimate">
+        <div className="estIntro"><span className="kicker green">QUICK ESTIMATE</span><h2>Know your range.<br /><em>Before we lift a thing.</em></h2><p>Adjust a few details for an instant planning estimate. We’ll confirm a transparent quote after a quick call.</p><ul><li><Check /> Truck, fuel & equipment included</li><li><Check /> No stair or long-carry surprises</li><li><Check /> Professional protection materials</li></ul></div>
+        <div className="calculator glassDark">
+          <div className="calcTop"><div><small>ESTIMATED TOTAL</small><strong>${estimate.toLocaleString("en-CA")}</strong></div><span>CAD · approx.</span></div>
+          <label>What are you moving?</label>
+          <div className="typeGrid">{["Studio", "1 Bedroom", "2 Bedroom", "3+ Bedroom", "Restaurant"].map(x => <button key={x} className={home === x ? "selected" : ""} onClick={() => setHome(x)}>{x}</button>)}</div>
+          <div className="rangeLabel"><label htmlFor="hours">Estimated time</label><output>{hours} hours</output></div><input id="hours" type="range" min="2" max="12" value={hours} onChange={e => setHours(+e.target.value)} />
+          <div className="rangeLabel"><label htmlFor="distance">Driving distance</label><output>{distance} km</output></div><input id="distance" type="range" min="2" max="80" value={distance} onChange={e => setDistance(+e.target.value)} />
+          <label className="toggle"><input type="checkbox" checked={packing} onChange={e => setPacking(e.target.checked)} /><span /><div><b>Add packing service</b><small>We bring materials and pack for you</small></div><strong>+$185</strong></label>
+          <a href="#contact" className="button primary full">Get my exact quote <Arrow /></a><small className="disclaimer">Planning estimate only. Final rate depends on access and inventory.</small>
+        </div>
+      </section>
+
+      <section className="section workSection" id="work">
+        <div className="sectionHead"><div><span className="kicker">RECENT MOVES</span><h2>Care you can see.</h2></div><p>Real-world moving expertise, from careful packing to the final placement.</p></div>
+        <div className="gallery">
+          <article className="photo photoOne"><div><span>RESIDENTIAL</span><h3>Two-bedroom apartment</h3><p>Kitsilano → Mount Pleasant · 5.5 hrs</p></div></article>
+          <article className="photo photoTwo"><div><span>PACKING</span><h3>Full-home preparation</h3><p>North Vancouver · 86 boxes</p></div></article>
+          <article className="photo photoThree"><div><span>HOSPITALITY</span><h3>Café relocation</h3><p>Commercial Drive · overnight</p></div></article>
+        </div>
+        <p className="photoNote">Representative project photography. Ask to see our latest verified move gallery.</p>
+      </section>
+
+      <section className="section reviewsSection" id="reviews">
+        <div className="reviewLead"><span className="kicker">NEIGHBOUR APPROVED</span><h2>Moves people<br />actually enjoyed.</h2><div className="bigRating"><strong>4.9</strong><div><span className="stars">★★★★★</span><small>Google rating</small></div></div></div>
+        <div className="reviewCards">{reviews.map(([initials,name,route,quote]) => <article className="reviewCard glass" key={name}><span className="quote">“</span><p>{quote}</p><div className="reviewer"><span>{initials}</span><div><b>{name}</b><small>{route}</small></div><em>★★★★★</em></div></article>)}</div>
+      </section>
+
+      <section className="areas section" id="areas">
+        <div className="areasMap"><div className="mapWater"/><div className="mapRoad roadOne"/><div className="mapRoad roadTwo"/><span className="pin p1">Vancouver</span><span className="pin p2">Burnaby</span><span className="pin p3">Richmond</span><span className="pin p4">Coquitlam</span><span className="pin p5">North Van</span></div>
+        <div className="areasCopy"><span className="kicker">LOCAL BY DESIGN</span><h2>Greater Vancouver<br />is our home route.</h2><p>Local crews who understand bridge timing, strata move windows, loading zones and neighbourhood access.</p><div className="areaTags">{["Vancouver","Burnaby","Richmond","Coquitlam","North Vancouver","West Vancouver","New Westminster","Surrey","Delta","Port Moody"].map(x=><span key={x}>{x}</span>)}</div><p className="small">Moving farther? Ask us about routes across British Columbia.</p></div>
+      </section>
+
+      <section className="contact section" id="contact">
+        <div className="contactCopy"><span className="kicker green">LET’S GET MOVING</span><h2>Tell us where.<br /><em>We’ll handle the how.</em></h2><p>Share a few details and we’ll respond with availability and a clear quote — usually within 20 minutes during business hours.</p><div className="contactMethods"><a href="tel:+16045550184"><span>↗</span><div><small>CALL OR TEXT</small><b>(604) 555–0184</b></div></a><a href="mailto:hello@northlinemovers.ca"><span>↗</span><div><small>EMAIL</small><b>hello@northlinemovers.ca</b></div></a></div></div>
+        <form className="contactForm glassDark" onSubmit={e => { e.preventDefault(); setSent(true); }}>
+          {sent ? <div className="success"><span>✓</span><h3>Request received.</h3><p>Thanks! We’ll be in touch shortly to confirm the details.</p><button type="button" onClick={()=>setSent(false)}>Send another</button></div> : <><div className="formRow"><label>Your name<input required placeholder="Alex Morgan" /></label><label>Phone number<input required type="tel" placeholder="(604) 555-0123" /></label></div><div className="formRow"><label>Moving from<input required placeholder="Postal code or neighbourhood" /></label><label>Moving to<input required placeholder="Postal code or neighbourhood" /></label></div><div className="formRow"><label>Move date<input required type="date" /></label><label>Move type<select defaultValue="Apartment"><option>Apartment</option><option>House</option><option>Café / restaurant</option><option>Other</option></select></label></div><label>Anything we should know?<textarea placeholder="Bedrooms, stairs, large items, packing help…" /></label><button className="button primary full" type="submit">Request my quote <Arrow /></button><small className="privacy">By submitting, you agree we may contact you about your move. No spam.</small></>}
+        </form>
+      </section>
+
+      <footer><div className="footerBrand"><a href="#top" className="brand"><span className="brandMark">N</span><span>NORTHLINE <b>MOVERS</b></span></a><p>Thoughtful moving and logistics<br />across Greater Vancouver.</p></div><div><h4>Explore</h4><a href="#services">Services</a><a href="#work">Our work</a><a href="#estimate">Estimate</a><a href="#reviews">Reviews</a></div><div><h4>Contact</h4><a href="tel:+16045550184">(604) 555–0184</a><a href="mailto:hello@northlinemovers.ca">hello@northlinemovers.ca</a><span>Mon–Sun · 7am–9pm</span></div><div><h4>Based in</h4><span>Vancouver, BC</span><span>Serving the Lower Mainland</span><span>BC registered & insured</span></div><div className="footerBottom"><span>© 2026 Northline Movers</span><span>Privacy · Terms</span><span>Made for moving forward.</span></div></footer>
+      <a className="mobileCta" href="#estimate">Get a free estimate <Arrow /></a>
+    </main>
+  );
+}
