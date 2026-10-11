@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 const Arrow = () => <span aria-hidden="true">↗</span>;
 const Check = () => <span className="check" aria-hidden="true">✓</span>;
@@ -21,15 +21,37 @@ const reviews = [
 export default function Home() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [home, setHome] = useState("2 Bedroom");
-  const [hours, setHours] = useState(5);
-  const [distance, setDistance] = useState(18);
-  const [packing, setPacking] = useState(false);
+  const [volume, setVolume] = useState("Typical");
   const [sent, setSent] = useState(false);
+  const [showNavEstimate, setShowNavEstimate] = useState(false);
 
-  const estimate = useMemo(() => {
-    const crew = home === "Studio" ? 129 : home === "1 Bedroom" ? 149 : home === "2 Bedroom" ? 179 : home === "3+ Bedroom" ? 219 : 239;
-    return Math.round(crew * hours + Math.max(0, distance - 10) * 2.25 + (packing ? 185 : 0));
-  }, [home, hours, distance, packing]);
+  useEffect(() => {
+    const primaryCta = document.getElementById("primary-estimate-cta");
+    if (!primaryCta) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowNavEstimate(!entry.isIntersecting && entry.boundingClientRect.bottom < 84),
+      { rootMargin: "-84px 0px 0px 0px", threshold: 0 },
+    );
+
+    observer.observe(primaryCta);
+    return () => observer.disconnect();
+  }, []);
+
+  const moveEstimate = useMemo(() => {
+    const homes = {
+      "1 Bedroom": { hours: 3, rate: 149 },
+      "2 Bedroom": { hours: 5, rate: 179 },
+      "3 Bedroom": { hours: 7, rate: 219 },
+      Townhouse: { hours: 8, rate: 239 },
+      House: { hours: 10, rate: 269 },
+    };
+    const selected = homes[home as keyof typeof homes];
+    const volumeAdjustment = volume === "Light" ? -1 : volume === "Full" ? 2 : 0;
+    const minHours = Math.max(2, selected.hours + volumeAdjustment);
+    const maxHours = minHours + (home === "House" || home === "Townhouse" ? 2 : 1);
+    return { rate: selected.rate, minHours, maxHours, minTotal: selected.rate * minHours, maxTotal: selected.rate * maxHours };
+  }, [home, volume]);
 
   return (
     <main>
@@ -43,7 +65,7 @@ export default function Home() {
           <a href="#areas" onClick={() => setMenuOpen(false)}>Areas</a>
           <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
         </nav>
-        <a className="navCta" href="#estimate">Get estimate <Arrow /></a>
+        <a className={`navCta ${showNavEstimate ? "navCtaVisible" : ""}`} href="#estimate" aria-hidden={!showNavEstimate} tabIndex={showNavEstimate ? 0 : -1}>Get estimate <Arrow /></a>
         <button className="menuButton" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
       </header>
 
@@ -52,7 +74,7 @@ export default function Home() {
           <div className="eyebrow"><i /> Moving Greater Vancouver, daily</div>
           <h1>Your move.<br /><em>Handled beautifully.</em></h1>
           <p>Careful local movers for apartments, homes, cafés and restaurants. Clear quotes. Protected belongings. No moving-day drama.</p>
-          <div className="heroActions"><a className="button primary" href="#estimate">Build your estimate <Arrow /></a><a className="button textButton" href="tel:+16045550184">(604) 555–0184</a></div>
+          <div className="heroActions"><a id="primary-estimate-cta" className="button primary" href="#estimate">Build your estimate <Arrow /></a><a className="button textButton" href="tel:+16045550184">(604) 555–0184</a></div>
           <div className="trustRow"><div className="faces"><span>AK</span><span>JM</span><span>DL</span></div><div><b>4.9 <span className="stars">★★★★★</span></b><small>from 240+ local moves</small></div></div>
         </div>
         <div className="heroVisual">
@@ -71,15 +93,26 @@ export default function Home() {
       </section>
 
       <section className="darkSection" id="estimate">
-        <div className="estIntro"><span className="kicker green">QUICK ESTIMATE</span><h2>Know your range.<br /><em>Before we lift a thing.</em></h2><p>Adjust a few details for an instant planning estimate. We’ll confirm a transparent quote after a quick call.</p><ul><li><Check /> Truck, fuel & equipment included</li><li><Check /> No stair or long-carry surprises</li><li><Check /> Professional protection materials</li></ul></div>
+        <div className="estIntro"><span className="kicker green">QUICK ESTIMATE</span><h2>Simple deposit.<br /><em>Then just the hours.</em></h2><p>A booking deposit reserves your date and crew. After that, you pay only for the actual time your move takes.</p><ul><li><Check /> Deposit secures your moving date</li><li><Check /> Remaining balance billed by actual hours</li><li><Check /> Clear hourly rate before moving day</li></ul></div>
         <div className="calculator glassDark">
-          <div className="calcTop"><div><small>ESTIMATED TOTAL</small><strong>${estimate.toLocaleString("en-CA")}</strong></div><span>CAD · approx.</span></div>
+          <div className="calcTop">
+            <div className="calcHeading">
+              <small>ESTIMATED MOVE RANGE</small>
+              <div className="priceRange">
+                <div className="pricePoint"><span>FROM</span><strong>CA${moveEstimate.minTotal.toLocaleString("en-CA")}</strong></div>
+                <i aria-hidden="true">→</i>
+                <div className="pricePoint"><span>UP TO</span><strong>CA${moveEstimate.maxTotal.toLocaleString("en-CA")}</strong></div>
+              </div>
+            </div>
+            <div className="rateBadge"><b>{moveEstimate.minHours}–{moveEstimate.maxHours} hours</b><small>CA${moveEstimate.rate} per hour</small></div>
+          </div>
           <label>What are you moving?</label>
-          <div className="typeGrid">{["Studio", "1 Bedroom", "2 Bedroom", "3+ Bedroom", "Restaurant"].map(x => <button key={x} className={home === x ? "selected" : ""} onClick={() => setHome(x)}>{x}</button>)}</div>
-          <div className="rangeLabel"><label htmlFor="hours">Estimated time</label><output>{hours} hours</output></div><input id="hours" type="range" min="2" max="12" value={hours} onChange={e => setHours(+e.target.value)} />
-          <div className="rangeLabel"><label htmlFor="distance">Driving distance</label><output>{distance} km</output></div><input id="distance" type="range" min="2" max="80" value={distance} onChange={e => setDistance(+e.target.value)} />
-          <label className="toggle"><input type="checkbox" checked={packing} onChange={e => setPacking(e.target.checked)} /><span /><div><b>Add packing service</b><small>We bring materials and pack for you</small></div><strong>+$185</strong></label>
-          <a href="#contact" className="button primary full">Get my exact quote <Arrow /></a><small className="disclaimer">Planning estimate only. Final rate depends on access and inventory.</small>
+          <div className="typeGrid">{["1 Bedroom", "2 Bedroom", "3 Bedroom", "Townhouse", "House"].map(x => <button key={x} aria-pressed={home === x} className={home === x ? "selected" : ""} onClick={() => setHome(x)}>{x}</button>)}</div>
+          <label>How full is the home?</label>
+          <div className="volumeGrid">{[["Light","A few essentials"],["Typical","Normally furnished"],["Full","Lots of furniture & boxes"]].map(([name,detail]) => <button key={name} aria-pressed={volume === name} className={volume === name ? "selected" : ""} onClick={() => setVolume(name)}><b>{name}</b><small>{detail}</small></button>)}</div>
+          <div className="paymentModel"><Check /><div><b>Booking deposit</b><small>Paid once to reserve your crew and date</small></div><strong>Confirmed in quote</strong></div>
+          <div className="estimateNotice"><span aria-hidden="true">i</span><p><b>This is an approximate estimate.</b> Final time and price may vary depending on the amount of belongings, elevator availability, stairs, carrying distance, oversized or heavy items, parking access, and other conditions that make handling more difficult.</p></div>
+          <a href="#contact" className="button primary full">Confirm my hourly rate <Arrow /></a><small className="disclaimer">Planning range based on home size and item volume. Your final balance is calculated from actual hours worked.</small>
         </div>
       </section>
 
@@ -106,7 +139,7 @@ export default function Home() {
       <section className="contact section" id="contact">
         <div className="contactCopy"><span className="kicker green">LET’S GET MOVING</span><h2>Tell us where.<br /><em>We’ll handle the how.</em></h2><p>Share a few details and we’ll respond with availability and a clear quote — usually within 20 minutes during business hours.</p><div className="contactMethods"><a href="tel:+16045550184"><span>↗</span><div><small>CALL OR TEXT</small><b>(604) 555–0184</b></div></a><a href="mailto:hello@northlinemovers.ca"><span>↗</span><div><small>EMAIL</small><b>hello@northlinemovers.ca</b></div></a></div></div>
         <form className="contactForm glassDark" onSubmit={e => { e.preventDefault(); setSent(true); }}>
-          {sent ? <div className="success"><span>✓</span><h3>Request received.</h3><p>Thanks! We’ll be in touch shortly to confirm the details.</p><button type="button" onClick={()=>setSent(false)}>Send another</button></div> : <><div className="formRow"><label>Your name<input required placeholder="Alex Morgan" /></label><label>Phone number<input required type="tel" placeholder="(604) 555-0123" /></label></div><div className="formRow"><label>Moving from<input required placeholder="Postal code or neighbourhood" /></label><label>Moving to<input required placeholder="Postal code or neighbourhood" /></label></div><div className="formRow"><label>Move date<input required type="date" /></label><label>Move type<select defaultValue="Apartment"><option>Apartment</option><option>House</option><option>Café / restaurant</option><option>Other</option></select></label></div><label>Anything we should know?<textarea placeholder="Bedrooms, stairs, large items, packing help…" /></label><button className="button primary full" type="submit">Request my quote <Arrow /></button><small className="privacy">By submitting, you agree we may contact you about your move. No spam.</small></>}
+          {sent ? <div className="success"><span>✓</span><h3>Request received.</h3><p>Thanks! We’ll be in touch shortly to confirm the details.</p><button type="button" onClick={()=>setSent(false)}>Send another</button></div> : <><div className="formRow"><label>Your name<input required placeholder="Alex Morgan" /></label><label>Phone number<input required type="tel" placeholder="(604) 555-0123" /></label></div><div className="formRow"><label>Moving from<input required placeholder="Postal code or neighbourhood" /></label><label>Moving to<input required placeholder="Postal code or neighbourhood" /></label></div><div className="formRow"><label>Move date<input required type="date" /></label><label>Move type<select defaultValue="2 Bedroom"><option>1 Bedroom</option><option>2 Bedroom</option><option>3 Bedroom</option><option>Townhouse</option><option>House</option></select></label></div><label>Anything we should know?<textarea placeholder="Bedrooms, stairs, large items, packing help…" /></label><button className="button primary full" type="submit">Request my quote <Arrow /></button><small className="privacy">By submitting, you agree we may contact you about your move. No spam.</small></>}
         </form>
       </section>
 
