@@ -12,6 +12,41 @@ footer{width:min(1280px,calc(100% - 32px));margin:0 auto 16px;padding:65px max(3
 @media(max-width:760px){.nav{top:10px;width:calc(100% - 20px);height:58px;border-radius:16px}.navCta{display:none}.menuButton{display:block}.navLinks{display:none;position:absolute;top:66px;left:0;right:0;padding:14px;background:rgba(245,247,248,.96);border-radius:16px;box-shadow:0 20px 45px rgba(20,25,30,.15);flex-direction:column;align-items:stretch;gap:0}.navLinks.open{display:flex}.navLinks a{padding:13px}.hero{width:calc(100% - 28px);min-height:0;padding:115px 0 70px;grid-template-columns:1fr;gap:45px}.heroCopy>p{font-size:16px}.heroActions{align-items:stretch;flex-direction:column;gap:8px}.textButton{align-self:center}.heroVisual{height:470px}.floatingCard.arrival{left:12px;bottom:14px;width:calc(100% - 24px)}.coverage{right:10px;top:15px}.proofStrip{width:calc(100% - 28px);grid-template-columns:1fr 1fr;gap:25px 0;padding-bottom:50px}.section{width:calc(100% - 28px);padding:82px 0}.sectionHead{grid-template-columns:1fr;gap:22px}.sectionHead>p{max-width:450px}.servicesGrid{grid-template-columns:1fr}.serviceCard{min-height:300px}.darkSection,.contact{width:calc(100% - 16px);padding:72px 18px;grid-template-columns:1fr;gap:45px;border-radius:25px}.calculator{padding:20px}.typeGrid{grid-template-columns:1fr 1fr}.gallery{grid-template-columns:1fr;grid-template-rows:420px 260px 260px}.photoOne{grid-row:auto}.reviewsSection{grid-template-columns:1fr}.reviewLead{position:static}.areas{grid-template-columns:1fr}.areasMap{height:420px;order:2}.formRow{grid-template-columns:1fr}.contactMethods b{font-size:11px}footer{width:calc(100% - 16px);grid-template-columns:1fr 1fr;padding:55px 22px 88px;border-radius:0 0 25px 25px}.footerBrand{grid-column:1/-1}.footerBottom{flex-direction:column;gap:8px}.mobileCta{position:fixed;display:flex;align-items:center;justify-content:space-between;z-index:45;left:12px;right:12px;bottom:10px;height:54px;padding:0 18px;border-radius:14px;background:var(--lime);font-weight:800;font-size:13px;box-shadow:0 13px 35px rgba(20,25,25,.25)}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 
+/* Motion language: calm entrance, staggered scroll reveals, subtle living details. */
+.heroCopy>*{opacity:0;animation:heroEnter .72s cubic-bezier(.2,.75,.25,1) forwards}.heroCopy>*:nth-child(1){animation-delay:.08s}.heroCopy>*:nth-child(2){animation-delay:.16s}.heroCopy>*:nth-child(3){animation-delay:.24s}.heroCopy>*:nth-child(4){animation-delay:.32s}.heroCopy>*:nth-child(5){animation-delay:.4s}.heroVisual{opacity:0;animation:heroVisualEnter .9s .18s cubic-bezier(.2,.75,.25,1) forwards}.arrival{animation:floatCard 5s 1.2s ease-in-out infinite}.coverage{animation:floatCard 5.8s .5s ease-in-out infinite reverse}.ambientOne{animation:ambientDrift 12s ease-in-out infinite alternate}.ambientTwo{animation:ambientDrift 15s -4s ease-in-out infinite alternate-reverse}
+@keyframes heroEnter{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+@keyframes heroVisualEnter{from{opacity:0;transform:translateY(30px) scale(.975)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes floatCard{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+@keyframes ambientDrift{from{transform:translate3d(-2%,0,0) scale(.96)}to{transform:translate3d(3%,4%,0) scale(1.05)}}
+.revealItem{opacity:0;filter:blur(5px);transform:translateY(34px) scale(.985);transition:opacity .72s cubic-bezier(.2,.75,.25,1),transform .72s cubic-bezier(.2,.75,.25,1),filter .72s ease;transition-delay:var(--reveal-delay,0ms);will-change:opacity,transform,filter}.revealItem.revealed{opacity:1;filter:blur(0);transform:translateY(0) scale(1)}
+.photo{transition:opacity .72s cubic-bezier(.2,.75,.25,1),transform .45s cubic-bezier(.2,.75,.25,1),filter .72s ease,box-shadow .45s ease}.photo.revealed:hover{transform:translateY(-5px) scale(1.008);box-shadow:0 24px 55px rgba(30,42,50,.18)}
+.navLinks a{position:relative}.navLinks a:after{content:"";position:absolute;right:0;bottom:-5px;left:0;height:1px;background:#171a1d;transform:scaleX(0);transform-origin:right;transition:transform .28s ease}.navLinks a:hover:after{transform:scaleX(1);transform-origin:left}
+@media(prefers-reduced-motion:reduce){.heroCopy>*,.heroVisual,.arrival,.coverage,.ambientOne,.ambientTwo{opacity:1;animation:none!important}.revealItem{opacity:1;filter:none;transform:none}.photo.revealed:hover{transform:none}}
+
+/* Balanced editorial columns for the two text-heavy sections. */
+.reviewsSection{grid-template-columns:minmax(390px,.86fr) minmax(0,1.14fr);gap:clamp(48px,5vw,72px)}
+.reviewLead h2,.areasCopy h2{font-size:clamp(42px,3.8vw,56px);line-height:1;letter-spacing:-.055em;text-wrap:balance}
+.reviewLead h2 em,.areasCopy h2 em{display:inline-block;margin-top:.08em;color:#737c83;font-family:Georgia,serif;font-weight:400;letter-spacing:-.045em}
+.reviewLead h2{max-width:520px}
+.areas{grid-template-columns:minmax(0,.96fr) minmax(470px,1.04fr);gap:clamp(48px,5vw,72px)}
+.areasCopy{min-width:0}.areasCopy h2{max-width:580px}
+
+@media(min-width:761px) and (max-width:1100px){
+  .reviewsSection{grid-template-columns:1fr;gap:44px}
+  .reviewLead{position:static;max-width:620px}
+  .areas{grid-template-columns:1fr;gap:42px}
+  .areasCopy{max-width:680px;grid-row:1}
+  .areasMap{grid-row:2;height:480px}
+}
+
+/* Unified section eyebrow: the same green status dot used in the hero. */
+.kicker{display:flex;align-items:center;gap:9px;color:var(--ink)!important}
+.kicker::before{content:"";display:block;flex:0 0 auto;width:7px;height:7px;border-radius:50%;background:#80a42b;box-shadow:0 0 0 5px rgba(128,164,43,.12);animation:kickerPulse 2.2s ease-in-out infinite}
+.darkSection .kicker,.contact .kicker{color:#f4f6f7!important}
+@keyframes kickerPulse{0%,100%{box-shadow:0 0 0 4px rgba(128,164,43,.1)}50%{box-shadow:0 0 0 8px rgba(128,164,43,.18)}}
+.eyebrow i{animation:kickerPulse 2.2s ease-in-out infinite}
+@media(prefers-reduced-motion:reduce){.kicker::before,.eyebrow i{animation:none}}
+
 .navCta{opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-8px) scale(.97);transition:opacity .22s ease,transform .22s ease,visibility .22s}
 .navCta.navCtaVisible{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1)}
 
@@ -38,6 +73,8 @@ body{overflow-anchor:none}
 @media(max-width:480px){.paymentModel{grid-template-columns:auto 1fr}.paymentModel>strong{grid-column:2;text-align:left}}
 
 .volumeGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:10px 0 22px}.volumeGrid button{display:flex;min-height:62px;padding:11px;flex-direction:column;align-items:flex-start;justify-content:center;gap:3px;border:1px solid rgba(255,255,255,.1);border-radius:9px;background:rgba(255,255,255,.05);color:#bdc2c7;text-align:left}.volumeGrid button b{font-size:11px}.volumeGrid button small{font-size:8px;color:#858d93}.volumeGrid button.selected{border-color:var(--lime);background:rgba(201,242,107,.12);color:var(--lime)}.volumeGrid button.selected small{color:#c5cbd0}
+.button{transition:transform .3s cubic-bezier(.22,.8,.25,1),box-shadow .3s ease,background-color .3s ease;will-change:transform}
+.calculator button{cursor:pointer}.typeGrid button,.volumeGrid button{transition:border-color .28s ease,background-color .28s ease,color .28s ease,transform .3s cubic-bezier(.22,.8,.25,1),box-shadow .3s ease;will-change:transform}@media(hover:hover){.typeGrid button:hover,.volumeGrid button:hover{box-shadow:0 8px 18px rgba(0,0,0,.1);transform:translateY(-2px)}.typeGrid button:not(.selected):hover,.volumeGrid button:not(.selected):hover{border-color:rgba(201,242,107,.55);background:rgba(201,242,107,.08)}}
 @media(max-width:480px){.volumeGrid{grid-template-columns:1fr}.calcTop{align-items:flex-start;gap:12px;flex-direction:column}.calcTop strong{font-size:34px}.calcTop>span{color:var(--lime)}}
 
 .calcTop{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:20px}.calcHeading{min-width:0}.priceRange{display:flex!important;flex-direction:row!important;align-items:flex-end;gap:12px;margin-top:12px}.pricePoint{display:flex;flex-direction:column;gap:2px;min-width:0}.pricePoint>span{color:#848c92;font:700 8px var(--font-mono);letter-spacing:1.2px}.pricePoint>strong{margin:0;white-space:nowrap;font-size:clamp(28px,3vw,42px);letter-spacing:-1.8px;line-height:1}.priceRange>i{margin-bottom:7px;color:var(--lime);font:400 20px var(--font-geist);font-style:normal}.rateBadge{display:flex!important;min-width:138px;padding:12px 14px;flex-direction:column;gap:3px;border:1px solid rgba(201,242,107,.22);border-radius:12px;background:rgba(201,242,107,.08)}.rateBadge b{color:var(--lime);font-size:12px}.rateBadge small{color:#aeb4ba;font:600 9px var(--font-mono);letter-spacing:0}
@@ -64,3 +101,35 @@ body{overflow-anchor:none}
   .menuButton{display:block;margin-left:8px}
   .contact{grid-template-columns:1fr;gap:48px}
 }
+
+/* Stable quote summary: each amount owns a full row, so values never collide. */
+.calcTop{grid-template-columns:minmax(0,1fr);align-items:stretch;gap:16px}
+.priceRange{display:grid!important;grid-template-columns:1fr;gap:8px;width:100%;margin-top:14px}
+.pricePoint,.pricePoint:last-child{display:flex;min-width:0;padding:12px 14px;flex-direction:row;align-items:baseline;justify-content:space-between;gap:20px;border:1px solid rgba(255,255,255,.09);border-radius:12px;background:rgba(255,255,255,.035);text-align:left}
+.pricePoint>strong{display:inline-flex;max-width:100%;align-items:baseline;font-size:clamp(28px,3.3vw,42px);letter-spacing:-1.5px}
+.pricePoint>strong .currency{display:inline-block;margin-right:.18em}
+.rateBadge{display:grid!important;grid-template-columns:minmax(0,1fr) auto;align-items:center;width:100%;min-width:0}
+.rateBadge small{text-align:right}
+
+@media(max-width:520px){
+  .pricePoint,.pricePoint:last-child{padding:11px 12px;gap:12px}
+  .pricePoint>strong{font-size:clamp(25px,8.5vw,34px)}
+  .rateBadge{grid-template-columns:1fr;gap:4px}
+  .rateBadge small{text-align:left}
+}
+
+/* Primary CTAs fill like lime liquid rising inside the button. */
+.button,.navCta,.mobileCta,.contactForm button{cursor:pointer}
+.primary{position:relative;z-index:0;overflow:hidden;isolation:isolate;background:var(--ink);transition:transform .3s cubic-bezier(.22,.8,.25,1),box-shadow .3s ease,color .3s ease}
+.primary::before{content:"";position:absolute;z-index:-1;inset:-22% -8%;background:var(--lime);clip-path:polygon(0 17%,10% 12%,22% 16%,34% 8%,47% 14%,60% 9%,73% 16%,86% 10%,100% 15%,100% 100%,0 100%);transform:translateY(108%);transition:transform .68s cubic-bezier(.2,.72,.2,1)}
+.primary span{transition:color .3s ease}
+@media(hover:hover){.primary:hover{color:var(--ink)}.primary:hover::before{transform:translateY(0)}.primary:hover span{color:var(--ink)}}
+.primary:focus-visible{color:var(--ink);outline:2px solid var(--lime);outline-offset:3px}.primary:focus-visible::before{transform:translateY(0)}.primary:focus-visible span{color:var(--ink)}
+
+/* Green hover language for contact and footer links. */
+.contactMethods a{width:fit-content;transition:transform .28s cubic-bezier(.22,.8,.25,1)}
+.contactMethods>a>span{transition:color .28s ease,background-color .28s ease,transform .28s ease}
+.contactMethods b{position:relative;width:fit-content;transition:color .28s ease}
+.contactMethods b::after,footer>div:not(.footerBrand):not(.footerBottom) a::after{content:"";position:absolute;right:0;bottom:-4px;left:0;height:1px;background:var(--lime);transform:scaleX(0);transform-origin:right;transition:transform .3s ease}
+footer>div:not(.footerBrand):not(.footerBottom) a{position:relative;width:fit-content;transition:color .28s ease,transform .28s cubic-bezier(.22,.8,.25,1)}
+@media(hover:hover){.contactMethods a:hover{transform:translateX(5px)}.contactMethods a:hover>span{background:var(--lime);color:var(--ink);transform:rotate(45deg)}.contactMethods a:hover b,footer>div:not(.footerBrand):not(.footerBottom) a:hover{color:var(--lime)}.contactMethods a:hover b::after,footer>div:not(.footerBrand):not(.footerBottom) a:hover::after{transform:scaleX(1);transform-origin:left}footer>div:not(.footerBrand):not(.footerBottom) a:hover{transform:translateX(4px)}}

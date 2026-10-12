@@ -1,9 +1,27 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type RefObject } from "react";
+import { useCountUp } from "react-countup";
 
 const Arrow = () => <span aria-hidden="true">↗</span>;
 const Check = () => <span className="check" aria-hidden="true">✓</span>;
+
+function RollingAmount({ value }: { value: number }) {
+  const countUpRef = useRef<HTMLSpanElement>(null);
+  const { update } = useCountUp({
+    ref: countUpRef as unknown as RefObject<HTMLElement>,
+    start: value,
+    end: value,
+    duration: 0.7,
+    separator: ",",
+    useEasing: true,
+    enableReinitialize: false,
+  });
+
+  useEffect(() => update(value), [update, value]);
+
+  return <span ref={countUpRef}>{value.toLocaleString("en-CA")}</span>;
+}
 
 const services = [
   { num: "01", title: "Apartment moves", text: "Elevators, strata rules, tight hallways — planned before moving day.", tag: "Most popular" },
@@ -35,6 +53,45 @@ export default function Home() {
     );
 
     observer.observe(primaryCta);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    const revealGroups = [
+      ".proofStrip > div",
+      ".sectionHead",
+      ".serviceCard",
+      ".estIntro, .calculator",
+      ".photo",
+      ".reviewLead, .reviewCard",
+      ".areasMap, .areasCopy",
+      ".contactCopy, .contactForm",
+      "footer > div",
+    ];
+    const elements: HTMLElement[] = [];
+
+    revealGroups.forEach((selector) => {
+      document.querySelectorAll<HTMLElement>(selector).forEach((element, index) => {
+        element.classList.add("revealItem");
+        element.style.setProperty("--reveal-delay", `${Math.min(index, 3) * 75}ms`);
+        elements.push(element);
+      });
+    });
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      elements.forEach((element) => element.classList.add("revealed"));
+      return;
+    }
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add("revealed");
+        observer.unobserve(entry.target);
+      });
+    }, { threshold: 0.12, rootMargin: "0px 0px -7% 0px" });
+
+    elements.forEach((element) => observer.observe(element));
     return () => observer.disconnect();
   }, []);
 
@@ -99,9 +156,8 @@ export default function Home() {
             <div className="calcHeading">
               <small>ESTIMATED MOVE RANGE</small>
               <div className="priceRange">
-                <div className="pricePoint"><span>FROM</span><strong>CA${moveEstimate.minTotal.toLocaleString("en-CA")}</strong></div>
-                <i aria-hidden="true">→</i>
-                <div className="pricePoint"><span>UP TO</span><strong>CA${moveEstimate.maxTotal.toLocaleString("en-CA")}</strong></div>
+                <div className="pricePoint"><span>FROM</span><strong><span className="currency">CA$</span><RollingAmount value={moveEstimate.minTotal} /></strong></div>
+                <div className="pricePoint"><span>UP TO</span><strong><span className="currency">CA$</span><RollingAmount value={moveEstimate.maxTotal} /></strong></div>
               </div>
             </div>
             <div className="rateBadge"><b>{moveEstimate.minHours}–{moveEstimate.maxHours} hours</b><small>CA${moveEstimate.rate} per hour</small></div>
@@ -127,13 +183,13 @@ export default function Home() {
       </section>
 
       <section className="section reviewsSection" id="reviews">
-        <div className="reviewLead"><span className="kicker">NEIGHBOUR APPROVED</span><h2>Moves people<br />actually enjoyed.</h2><div className="bigRating"><strong>4.9</strong><div><span className="stars">★★★★★</span><small>Google rating</small></div></div></div>
+        <div className="reviewLead"><span className="kicker">NEIGHBOUR APPROVED</span><h2>Moves people<br /><em>actually enjoyed.</em></h2><div className="bigRating"><strong>4.9</strong><div><span className="stars">★★★★★</span><small>Google rating</small></div></div></div>
         <div className="reviewCards">{reviews.map(([initials,name,route,quote]) => <article className="reviewCard glass" key={name}><span className="quote">“</span><p>{quote}</p><div className="reviewer"><span>{initials}</span><div><b>{name}</b><small>{route}</small></div><em>★★★★★</em></div></article>)}</div>
       </section>
 
       <section className="areas section" id="areas">
         <div className="areasMap"><div className="mapWater"/><div className="mapRoad roadOne"/><div className="mapRoad roadTwo"/><span className="pin p1">Vancouver</span><span className="pin p2">Burnaby</span><span className="pin p3">Richmond</span><span className="pin p4">Coquitlam</span><span className="pin p5">North Van</span></div>
-        <div className="areasCopy"><span className="kicker">LOCAL BY DESIGN</span><h2>Greater Vancouver<br />is our home route.</h2><p>Local crews who understand bridge timing, strata move windows, loading zones and neighbourhood access.</p><div className="areaTags">{["Vancouver","Burnaby","Richmond","Coquitlam","North Vancouver","West Vancouver","New Westminster","Surrey","Delta","Port Moody"].map(x=><span key={x}>{x}</span>)}</div><p className="small">Moving farther? Ask us about routes across British Columbia.</p></div>
+        <div className="areasCopy"><span className="kicker">LOCAL BY DESIGN</span><h2>Greater Vancouver<br /><em>is our home route.</em></h2><p>Local crews who understand bridge timing, strata move windows, loading zones and neighbourhood access.</p><div className="areaTags">{["Vancouver","Burnaby","Richmond","Coquitlam","North Vancouver","West Vancouver","New Westminster","Surrey","Delta","Port Moody"].map(x=><span key={x}>{x}</span>)}</div><p className="small">Moving farther? Ask us about routes across British Columbia.</p></div>
       </section>
 
       <section className="contact section" id="contact">
