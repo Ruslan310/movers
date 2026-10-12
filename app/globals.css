@@ -121,7 +121,7 @@ body{overflow-anchor:none}
 /* Primary CTAs fill like lime liquid rising inside the button. */
 .button,.navCta,.mobileCta,.contactForm button{cursor:pointer}
 .primary{position:relative;z-index:0;overflow:hidden;isolation:isolate;background:var(--ink);transition:transform .3s cubic-bezier(.22,.8,.25,1),box-shadow .3s ease,color .3s ease}
-.primary::before{content:"";position:absolute;z-index:-1;inset:-40% -8% -22%;background:var(--lime);clip-path:polygon(0 17%,10% 12%,22% 16%,34% 8%,47% 14%,60% 9%,73% 16%,86% 10%,100% 15%,100% 100%,0 100%);transform:translateY(108%);transition:transform .68s cubic-bezier(.2,.72,.2,1)}
+.primary::before{content:"";position:absolute;z-index:-1;inset:-40% -8% -22%;background:var(--lime);clip-path:polygon(0 17%,10% 12%,22% 16%,34% 8%,47% 14%,60% 9%,73% 16%,86% 10%,100% 15%,100% 100%,0 100%);transform:translateY(108%);transition:transform .82s cubic-bezier(.2,.72,.2,1)}
 .primary span{transition:color .3s ease}
 @media(hover:hover){.primary:hover{color:var(--ink)}.primary:hover::before{transform:translateY(0)}.primary:hover span{color:var(--ink)}}
 .primary:focus-visible{color:var(--ink);outline:2px solid var(--lime);outline-offset:3px}.primary:focus-visible::before{transform:translateY(0)}.primary:focus-visible span{color:var(--ink)}
