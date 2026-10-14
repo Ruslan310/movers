@@ -150,7 +150,7 @@ export default function Home() {
           <a href="#contact" onClick={() => setMenuOpen(false)}>Contact</a>
         </nav>
         <a className={`navCta ${showNavEstimate ? "navCtaVisible" : ""}`} href="#estimate" aria-hidden={!showNavEstimate} tabIndex={showNavEstimate ? 0 : -1}>Get estimate <Arrow /></a>
-        <button className="menuButton" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /></button>
+        <button className="menuButton" aria-label="Toggle menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(!menuOpen)}><span /><span /><span /></button>
       </header>
 
       <section className="hero" id="top">

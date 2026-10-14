@@ -149,3 +149,18 @@ footer>div:not(.footerBrand):not(.footerBottom) a{position:relative;width:fit-co
   .contact{margin-bottom:0;border-radius:25px}
   footer{margin:14px auto 16px;border-radius:25px}
 }
+
+/* Animated three-line mobile navigation trigger and dropdown. */
+.menuButton{padding:0;cursor:pointer}.menuButton span{transform-origin:center;transition:transform .28s cubic-bezier(.22,.8,.25,1),opacity .2s ease,background-color .25s ease}
+.menuButton[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.menuButton[aria-expanded="true"] span:nth-child(2){opacity:0;transform:scaleX(.35)}
+.menuButton[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
+@media(hover:hover){.menuButton:hover span{background:var(--lime)}}
+
+@media(max-width:1000px){
+  .navLinks{display:flex!important;opacity:0;visibility:hidden;pointer-events:none;transform:translateY(-10px) scale(.985);transform-origin:top center;transition:opacity .26s ease,transform .3s cubic-bezier(.22,.8,.25,1),visibility 0s linear .3s}
+  .navLinks.open{opacity:1;visibility:visible;pointer-events:auto;transform:translateY(0) scale(1);transition-delay:0s}
+  .navLinks a{opacity:0;transform:translateY(-6px);transition:opacity .22s ease,transform .25s ease,color .25s ease}
+  .navLinks.open a{opacity:1;transform:translateY(0)}
+  .navLinks.open a:nth-child(1){transition-delay:.05s}.navLinks.open a:nth-child(2){transition-delay:.08s}.navLinks.open a:nth-child(3){transition-delay:.11s}.navLinks.open a:nth-child(4){transition-delay:.14s}.navLinks.open a:nth-child(5){transition-delay:.17s}
+}
