@@ -57,6 +57,33 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    const handleInternalLink = (event: MouseEvent) => {
+      if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!(event.target instanceof Element)) return;
+
+      const link = event.target.closest<HTMLAnchorElement>('a[href^="#"]');
+      const hash = link?.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      const target = document.getElementById(hash.slice(1));
+      if (!target) return;
+
+      event.preventDefault();
+      setMenuOpen(false);
+
+      const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const navOffset = target.id === "top" ? 0 : window.innerWidth <= 760 ? 82 : 100;
+      const targetTop = target.getBoundingClientRect().top + window.scrollY - navOffset;
+
+      window.scrollTo({ top: Math.max(0, targetTop), behavior: reduceMotion ? "auto" : "smooth" });
+      window.history.pushState(null, "", hash);
+    };
+
+    document.addEventListener("click", handleInternalLink);
+    return () => document.removeEventListener("click", handleInternalLink);
+  }, []);
+
+  useEffect(() => {
     const revealGroups = [
       ".proofStrip > div",
       ".sectionHead",

@@ -133,3 +133,19 @@ body{overflow-anchor:none}
 .contactMethods b::after,footer>div:not(.footerBrand):not(.footerBottom) a::after{content:"";position:absolute;right:0;bottom:-4px;left:0;height:1px;background:var(--lime);transform:scaleX(0);transform-origin:right;transition:transform .3s ease}
 footer>div:not(.footerBrand):not(.footerBottom) a{position:relative;width:fit-content;transition:color .28s ease,transform .28s cubic-bezier(.22,.8,.25,1)}
 @media(hover:hover){.contactMethods a:hover{transform:translateX(5px)}.contactMethods a:hover>span{background:var(--lime);color:var(--ink);transform:rotate(45deg)}.contactMethods a:hover b,footer>div:not(.footerBrand):not(.footerBottom) a:hover{color:var(--lime)}.contactMethods a:hover b::after,footer>div:not(.footerBrand):not(.footerBottom) a:hover::after{transform:scaleX(1);transform-origin:left}footer>div:not(.footerBrand):not(.footerBottom) a:hover{transform:translateX(4px)}}
+
+/* Final mobile layout overrides must remain after the desktop editorial grids. */
+@media(max-width:760px){
+  .reviewsSection{display:grid;grid-template-columns:minmax(0,1fr);gap:36px;padding-bottom:72px}
+  .reviewLead,.reviewCards{width:100%;min-width:0}
+  .reviewLead{position:static;top:auto;max-width:none}
+  .reviewLead h2,.areasCopy h2{max-width:none;font-size:clamp(38px,12vw,50px);line-height:1.02;text-wrap:wrap}
+  .areas{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;align-items:stretch;padding-top:72px;overflow:visible}
+  .areasCopy{grid-row:1;width:100%;min-width:0;max-width:none}
+  .areasCopy>p{max-width:none;font-size:14px;line-height:1.65}
+  .areasMap{grid-row:2;order:initial;width:100%;min-width:0;height:350px}
+  .areaTags{gap:7px;margin:22px 0}
+  .areaTags span{padding:7px 9px;font-size:9px}
+  .contact{margin-bottom:0;border-radius:25px}
+  footer{margin:14px auto 16px;border-radius:25px}
+}
